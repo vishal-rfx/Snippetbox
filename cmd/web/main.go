@@ -93,6 +93,10 @@ func main(){
 		// you could pass slog.LevelWarn as the final parameter.
 		ErrorLog: slog.NewLogLogger(logger.Handler(), slog.LevelError),
 		TLSConfig: tlsConfig,
+		// Add Idle, Read and Write timeouts to the server
+		IdleTimeout: time.Minute,
+		ReadTimeout: 5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 	logger.Info("Starting a server on %s", "addr",*addr)
 	
