@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/justinas/alice"
+	"github.com/vishal-rfx/snippetbox/ui"
 )
 
 // routes method returns a servemux containing application routes.
@@ -13,12 +14,11 @@ func (app *application) routes() http.Handler {
 	// register the home function as the handler for the "/" URL pattern.
 	mux := http.NewServeMux()
 
-	// Create a file server which serves files out of the "./ui/static" directory.
-	// Note that the path given to the http.Dir function is relative to the project directory root.
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	// Use the mux.Handle() to register the file server as the handler for all URL paths that start with 
-	// "/static/" for matching paths, we strip the "/static" prefix before the request reaches the file server.
-	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
+	// Use the http.FileServerFS() function to create a HTTP handler which
+	// serves the embedded files in ui.Files. It's important to note that our static files are 
+	// contained in the static folder of the ui.Files embedded filesystem. So, for example, our CSS stylesheet is located at 
+	// "static/css/main.css".
+	mux.Handle("GET /static/", http.FileServerFS(ui.Files))
 
 	// Create a new middleware chain containing the middleware specific to our dynamic application routes.
 	// For now, this chain will only contain the LoadAndSave session middleware but we'll add more to it later.

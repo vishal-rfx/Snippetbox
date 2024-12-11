@@ -1,11 +1,13 @@
 package main
 
 import (
+	"html/template"
+	"io/fs"
 	"path/filepath"
 	"time"
-	"html/template"
 
 	"github.com/vishal-rfx/snippetbox/internal/models"
+	"github.com/vishal-rfx/snippetbox/ui"
 )
 
 // humanDate function which returns a nicely formatter string representation of a time.Time object.
@@ -27,9 +29,9 @@ func newTemplateCache() (map[string]*template.Template, error) {
 	// Initialize a new map to act as the cache.
 	cache := map[string]*template.Template{}
 
-	// use the filepath.Glob() function to get a slice of all filepaths that
+	// use the fs.Glob() function to get a slice of all filepaths that
 	// match the pattern "./ui/html/pages/*.tmpl"
-	pages, err := filepath.Glob("./ui/html/pages/*.tmpl.html")
+	pages, err := fs.Glob(ui.Files, "html/pages/*.tmpl.html")
 	if err != nil {
 		return nil, err
 	}
@@ -37,26 +39,21 @@ func newTemplateCache() (map[string]*template.Template, error) {
 	for _, page := range pages {
 		// Extract the filename from the full filepath and assign it to the name variable
 		name := filepath.Base(page)
+		patterns := []string {
+			"html/base.tmpl.html",
+			"html/partials/*.tmpl.html",
+			page,
+		}
+
+
 		// The template.FuncMap must be registered with the template set before we call the ParseFiles() method. This
 		// means we have to use the template.New() to create an empty template set, use the Funcs method to register the
 		// template.FuncMap, and then parse the file as normal.
-		ts, err := template.New(name).Funcs(functions).ParseFiles("./ui/html/base.tmpl.html")
+		ts, err := template.New(name).Funcs(functions).ParseFS(ui.Files, patterns...)
 		if err != nil {
 			return nil, err
 		}
-
-		// Call ParseGlob() on this template set to add any partials
-		ts, err = ts.ParseGlob("./ui/html/partials/*.tmpl.html")
-		if err != nil {
-			return nil, err
-		}
-
-		// Call ParseFiles() on this template set to  add the page template.
-		ts, err = ts.ParseFiles(page)
-		if err != nil {
-			return nil, err
-		}
-
+		
 		cache[name] = ts
 	}
 	return cache, nil
