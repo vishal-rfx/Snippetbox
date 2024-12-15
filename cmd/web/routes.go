@@ -19,6 +19,9 @@ func (app *application) routes() http.Handler {
 	// contained in the static folder of the ui.Files embedded filesystem. So, for example, our CSS stylesheet is located at 
 	// "static/css/main.css".
 	mux.Handle("GET /static/", http.FileServerFS(ui.Files))
+	
+	// Add a new GET /ping route.
+	mux.HandleFunc("GET /ping", ping)
 
 	// Create a new middleware chain containing the middleware specific to our dynamic application routes.
 	// For now, this chain will only contain the LoadAndSave session middleware but we'll add more to it later.

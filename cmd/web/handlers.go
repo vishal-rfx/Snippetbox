@@ -269,3 +269,4 @@ func (app *application) userLogoutPost(w http.ResponseWriter, r *http.Request){
 func ping(w http.ResponseWriter, _ *http.Request) {
 	w.Write([]byte("OK"))
 }
+
