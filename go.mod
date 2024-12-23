@@ -13,5 +13,8 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/PuerkitoBio/goquery v1.10.0 // indirect
+	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/justinas/nosurf v1.1.1 // indirect
+	golang.org/x/net v0.29.0 // indirect
 )
